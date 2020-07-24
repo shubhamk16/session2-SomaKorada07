@@ -1,5 +1,6 @@
 from typing import List
 import time
+import gc
 
 # Here in this code we will be leaking memory because we are creating cyclic reference. 
 # Find that we are indeed making cyclic references.
@@ -13,6 +14,9 @@ class Something(object):
         super().__init__()
         self.something_new = None
 
+    def __repr__(self):
+        return 'Something'
+
 
 class SomethingNew(object):
 
@@ -21,21 +25,26 @@ class SomethingNew(object):
         self.i = i
         self.something = something
 
+    def __repr__(self):
+        return 'SomethingNew'
+
 
 def add_something(collection: List[Something], i: int):
     something = Something()
     something.something_new = SomethingNew(i, something)
     collection.append(something)
 
-def reserved_Function():
+
+def reserved_function():
     # to be used in future if required
     pass
 
+
 def clear_memory(collection: List[Something]):
     # you probably need to add some comment here
-
-    
     collection.clear()
+    # Garbage Collector will be invoked to remove cyclic reference
+    gc.collect()
 
 
 def critical_function():
@@ -63,7 +72,14 @@ def compare_strings_old(n):
 
 # YOU NEED TO CHANGE THIS PROGRAM
 def compare_strings_new(n):
-    time.sleep(6) # remove this line, this is just to simulate your "slow" code
+    #time.sleep(6) # remove this line, this is just to simulate your "slow" code
+    a = 'a long string that is not intered' * 200
+    b = 'a long string that is not intered' * 200
+    if a is b:
+        pass
+    for i in a:
+        if i == 'd':
+            pass
 
 
 
